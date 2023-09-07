@@ -3,8 +3,12 @@ resource "random_string" "string" {
   special = false
 }
 
-data "aws_ecr_image" "latest" {
-  name = "${var.name}-api"
+data "aws_ecr_repository" "latest" {
+  name = "web-whisper-api"
+}
+
+data "aws_secretsmanager_secret_version" "db" {
+  secret_id = module.db.db_instance_master_user_secret_arn
 }
 
 module "api" {
@@ -14,7 +18,7 @@ module "api" {
   description    = "API for ${var.name}-${var.env}"
   create_package = false
 
-  image_uri    = "${data.aws_ecr_image.latest.repository_url}:${data.aws_ecr_image.latest.image_digest}"
+  image_uri    = "${data.aws_ecr_repository.latest.repository_url}:latest"
   package_type = "Image"
 
   timeout                           = 60
@@ -31,6 +35,7 @@ module "api" {
     "POSTGRES_PORT"        = module.db.db_instance_port
     "POSTGRES_USER"        = module.db.db_instance_username
     "POSTGRES_DB"          = module.db.db_instance_name
+    "POSTGRES_PASSWORD"    = data.aws_secretsmanager_secret_version.db.secret_string
     "PROJECT_NAME"         = "${var.name}-api"
     "BACKEND_CORS_ORIGINS" = "[\"*\"]"
     "SECERET_KEY"          = random_string.string.result
