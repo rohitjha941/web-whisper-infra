@@ -16,6 +16,6 @@ module "db_default" {
   port                 = 5432
 
   db_subnet_group_name   = module.vpc.database_subnet_group
-  vpc_security_group_ids = [module.all.security_group_id]
+  vpc_security_group_ids = [module.all_security_group.security_group_id]
 
 }
