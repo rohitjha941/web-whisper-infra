@@ -1,7 +1,10 @@
-//get random string
 resource "random_string" "string" {
   length  = 20
   special = false
+}
+
+data "aws_ecr_image" "latest" {
+  name = "${var.name}-api"
 }
 
 module "api" {
@@ -11,7 +14,7 @@ module "api" {
   description    = "API for ${var.name}-${var.env}"
   create_package = false
 
-  image_uri    = "132367819851.dkr.ecr.eu-west-1.amazonaws.com/complete-cow:1.0"
+  image_uri    = "${data.aws_ecr_image.latest.repository_url}:${data.aws_ecr_image.latest.image_digest}"
   package_type = "Image"
 
   timeout                           = 60
