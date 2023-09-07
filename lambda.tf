@@ -1,3 +1,9 @@
+//get random string
+resource "random_string" "string" {
+  length  = 20
+  special = false
+}
+
 module "api" {
   source = "terraform-aws-modules/lambda/aws"
 
@@ -16,4 +22,15 @@ module "api" {
   vpc_subnet_ids         = module.vpc.private_subnets
   vpc_security_group_ids = [module.all_security_group.security_group_id]
   attach_network_policy  = true
+
+  environment_variables = {
+    "POSTGRES_SERVER"      = module.db.db_instance_address
+    "POSTGRES_PORT"        = module.db.db_instance_port
+    "POSTGRES_USER"        = module.db.db_instance_username
+    "POSTGRES_DB"          = module.db.db_instance_name
+    "PROJECT_NAME"         = "${var.name}-api"
+    "BACKEND_CORS_ORIGINS" = "[\"*\"]"
+    "SECERET_KEY"          = random_string.string.result
+    "ALGORITHM"            = "HS256"
+  }
 }
