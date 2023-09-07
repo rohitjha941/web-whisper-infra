@@ -1,20 +1,14 @@
 provider "aws" {
   region = var.region
-
   default_tags {
-    Terraform   = "true"
-    Environment = var.env
-    Project     = var.name
+    tags = local.tags
   }
 }
 
 provider "awscc" {
   region = var.region
-
   default_tags {
-    Terraform   = "true"
-    Environment = var.env
-    Project     = var.name
+    tags = local.tags
   }
 }
 
