@@ -19,5 +19,4 @@ module "db_default" {
   create_db_subnet_group = true
   subnet_ids             = module.vpc.public_subnets
   vpc_security_group_ids = [module.all_security_group.security_group_id]
-
 }
