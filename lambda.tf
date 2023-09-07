@@ -35,7 +35,7 @@ module "api" {
     "POSTGRES_PORT"        = module.db.db_instance_port
     "POSTGRES_USER"        = module.db.db_instance_username
     "POSTGRES_DB"          = module.db.db_instance_name
-    "POSTGRES_PASSWORD"    = data.aws_secretsmanager_secret_version.db.secret_string
+    "POSTGRES_PASSWORD"    = jsondecode(data.aws_secretsmanager_secret_version.db.secret_string)["password"]
     "PROJECT_NAME"         = "${var.name}-api"
     "BACKEND_CORS_ORIGINS" = "[\"*\"]"
     "SECERET_KEY"          = random_string.string.result
